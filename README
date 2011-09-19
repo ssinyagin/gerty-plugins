@@ -1,2 +1,19 @@
 This is a collection of Gerty plugin modules. 
 All vendor-dependent code should be placed here or in separate repositories.
+
+
+
+Installing from sources:
+------------------------
+
+Pre-requisites: autoconf, automake, and a number of Perl modules
+
+  git clone https://github.com/ssinyagin/gerty-plugins.git
+  cd gerty-plugins/PLUGIN
+  autoreconf
+  ./configure --prefix=/opt/gerty plugconfdir=/opt/gerty/share/gerty/plugconf
+  make
+  make install
+
+later on, "git pull" would refresh your copy with the latest updates
+
