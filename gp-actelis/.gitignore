@@ -11,3 +11,4 @@ configure
 configure.lineno
 gp-actelis-*.tar.gz
 setup_tools/substvars.sh
+gp-actelis.init.pl
