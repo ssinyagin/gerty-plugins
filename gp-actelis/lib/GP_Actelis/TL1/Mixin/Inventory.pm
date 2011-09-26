@@ -83,7 +83,7 @@ sub get_actelis_inventory
     {
         if( $entry =~ /^(\w+)=(.+)$/ )
         {
-            $ret->{'system'}{'software'}{$1} = $2;
+            $ret->{'software'}{'system'}{$1} = $2;
         }
     }    
     
