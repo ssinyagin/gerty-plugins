@@ -37,8 +37,26 @@ sub new
     my $self = $class->SUPER::new( $options );    
     return undef unless defined($self);
 
-    $self->register_action_processors({'c3g_gsm_stats' =>
-                                           [ \&process_c3g_gsm_stats ]});
+    $self->register_action_processors
+        ({'c3g_gsm_stats' =>
+              [ \&process_c3g_gsm_stats ]});
+    
+    $self->register_action_dbcleanup
+        ({'c3g_gsm_stats' =>
+              [
+               {
+                   'table' => 'C3G_GSM_RSSI_MINUTE_HISTORY',
+                   'sysname_column' => 'HOSTNAME',
+                   'date_column' => 'MEASURE_TS',
+               },
+               {
+                   'table' => 'C3G_GSM_SRVTYPE',
+                   'sysname_column' => 'HOSTNAME',
+                   'date_column' => 'MEASURE_TS',
+               },
+              ],
+         });
+    
     return $self;
 }
 
