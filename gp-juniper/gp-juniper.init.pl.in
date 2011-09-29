@@ -1,0 +1,3 @@
+
+push(@INC, '@perllibdir@');
+$Gerty::devclass_paths{'@devclassdir@'} = 200;
