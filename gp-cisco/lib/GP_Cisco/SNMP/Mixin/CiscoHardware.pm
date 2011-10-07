@@ -22,7 +22,7 @@ package GP_Cisco::SNMP::Mixin::CiscoHardware;
 use strict;
 use warnings;
 use JSON ();
-
+use Net::SNMP qw(oid_lex_sort);
 
 our $action_handlers_registry = {
     'cisco.chassis_info' => \&get_chassis_info,
@@ -67,18 +67,18 @@ sub get_chassis_info
     my $session = $ahandler->session();
     my $chassis_phy;
     
-    # find the phy with entPhysicalContainedIn = 0
+    # find the first phy with entPhysicalClass = chassis(3)
     {
-        # ENTITY-MIB::entPhysicalContainedIn
-        my $base = '1.3.6.1.2.1.47.1.1.1.1.4';
+        # ENTITY-MIB::entPhysicalClass
+        my $base = '1.3.6.1.2.1.47.1.1.1.1.5';
         my $prefixLen = length( $base ) + 1;
         my $table = $session->get_table( -baseoid => $base );
         
         if( defined( $table ) )
-        {            
-            while( my( $oid, $val ) = each %{$table} )
+        {
+            foreach my $oid (oid_lex_sort(keys %{$table}))
             {
-                if( $val == 0 )
+                if( $table->{$oid} == 3 )
                 {
                     $chassis_phy = substr( $oid, $prefixLen );
                     last;
