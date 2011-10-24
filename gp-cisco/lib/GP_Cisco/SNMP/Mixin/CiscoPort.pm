@@ -44,7 +44,7 @@ sub retrieve_action_handlers
 my %ifTypeInterested =
     (6 => 1);
 
-    
+
 my %ifStatusVal =
     (1 => 'up',
      2 => 'down',
@@ -74,8 +74,8 @@ my %udldMode =
      3 => 'aggressive',
      4 => 'default');
 
-    
-    
+
+
 # Collect port status from the following MIBs:
 # IF-MIB
 # CISCO-CDP-MIB
@@ -341,6 +341,7 @@ sub get_port_info
         }
     }
     
+    my $udld_supported = 0;
     
     # UDLD global status
     {
@@ -365,71 +366,74 @@ sub get_port_info
                     $udldMode{$r->{$oidGlobalMode}};
                 $result->{'system'}{'udld'}{'global-aggressive-enabled'} =
                     ($r->{$oidGlobalMode} == 3 ? 1:0);
+                $udld_supported = 1;
             }
         }
     }
-            
+    
 
     # UDLD port status
-    
+
+    if( $udld_supported )
     {
-        # CISCO-UDLDP-MIB::cudldpInterfaceOperStatus
-        my $base = '1.3.6.1.4.1.9.9.118.1.2.1.1.2';
-        my $prefixLen = length( $base ) + 1;
-        my $table = $session->get_table( -baseoid => $base );
-        
-        if( defined( $table ) )
         {
-            while( my( $oid, $val ) = each %{$table} )
+            # CISCO-UDLDP-MIB::cudldpInterfaceOperStatus
+            my $base = '1.3.6.1.4.1.9.9.118.1.2.1.1.2';
+            my $prefixLen = length( $base ) + 1;
+            my $table = $session->get_table( -baseoid => $base );
+            
+            if( defined( $table ) )
             {
-                my $ifIndex = substr( $oid, $prefixLen );
-                my $name = $index2name{$ifIndex};                
-                $result->{'ports'}{$name}{'udld-oper-status'} =
-                    $udldOperStatus{$val};
-                $result->{'ports'}{$name}{'udld-shutdown'} =
-                    ($val == 1 ? 1:0);
+                while( my( $oid, $val ) = each %{$table} )
+                {
+                    my $ifIndex = substr( $oid, $prefixLen );
+                    my $name = $index2name{$ifIndex};                
+                    $result->{'ports'}{$name}{'udld-oper-status'} =
+                        $udldOperStatus{$val};
+                    $result->{'ports'}{$name}{'udld-shutdown'} =
+                        ($val == 1 ? 1:0);
+                }
             }
         }
-    }
-    
-    {
-        # CISCO-UDLDP-MIB::cudldpInterfaceAdminMode
-        my $base = '1.3.6.1.4.1.9.9.118.1.2.1.1.4';
-        my $prefixLen = length( $base ) + 1;
-        my $table = $session->get_table( -baseoid => $base );
         
-        if( defined( $table ) )
         {
-            while( my( $oid, $val ) = each %{$table} )
+            # CISCO-UDLDP-MIB::cudldpInterfaceAdminMode
+            my $base = '1.3.6.1.4.1.9.9.118.1.2.1.1.4';
+            my $prefixLen = length( $base ) + 1;
+            my $table = $session->get_table( -baseoid => $base );
+            
+            if( defined( $table ) )
             {
-                my $ifIndex = substr( $oid, $prefixLen );
-                my $name = $index2name{$ifIndex};                
-                $result->{'ports'}{$name}{'udld-admin-mode'} =
-                    $udldMode{$val};
+                while( my( $oid, $val ) = each %{$table} )
+                {
+                    my $ifIndex = substr( $oid, $prefixLen );
+                    my $name = $index2name{$ifIndex};                
+                    $result->{'ports'}{$name}{'udld-admin-mode'} =
+                        $udldMode{$val};
+                }
             }
         }
-    }
-    
-    {
-        # CISCO-UDLDP-MIB::cudldpInterfaceOperMode
-        my $base = '1.3.6.1.4.1.9.9.118.1.2.1.1.5';
-        my $prefixLen = length( $base ) + 1;
-        my $table = $session->get_table( -baseoid => $base );
         
-        if( defined( $table ) )
         {
-            while( my( $oid, $val ) = each %{$table} )
+            # CISCO-UDLDP-MIB::cudldpInterfaceOperMode
+            my $base = '1.3.6.1.4.1.9.9.118.1.2.1.1.5';
+            my $prefixLen = length( $base ) + 1;
+            my $table = $session->get_table( -baseoid => $base );
+            
+            if( defined( $table ) )
             {
-                my $ifIndex = substr( $oid, $prefixLen );
-                my $name = $index2name{$ifIndex};                
-                $result->{'ports'}{$name}{'udld-oper-mode'} =
-                    $udldMode{$val};
-                $result->{'ports'}{$name}{'udld-aggressive-enabled'} =
-                    ($val == 3 ? 1:0);
+                while( my( $oid, $val ) = each %{$table} )
+                {
+                    my $ifIndex = substr( $oid, $prefixLen );
+                    my $name = $index2name{$ifIndex};                
+                    $result->{'ports'}{$name}{'udld-oper-mode'} =
+                        $udldMode{$val};
+                    $result->{'ports'}{$name}{'udld-aggressive-enabled'} =
+                        ($val == 3 ? 1:0);
+                }
             }
         }
-    }
-    
+    }    
 
     # Exclude virtual and other noninteresting ports
     foreach my $name (keys %{$result->{'ports'}})
