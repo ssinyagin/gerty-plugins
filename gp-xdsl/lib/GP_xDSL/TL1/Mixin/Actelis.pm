@@ -16,7 +16,7 @@
 # Hardware+Software inventory action for Actelis modems
 
 
-package GP_Actelis::TL1::Mixin::Inventory;
+package GP_xDSL::TL1::Mixin::Actelis;
 
 use strict;
 use warnings;

@@ -17,7 +17,7 @@
 #
 
 
-AC_INIT([gp-actelis],[1.01.01dev],[ssinyagin@k-open.com])
+AC_INIT([gp-xdsl],[1.01.01dev],[ssinyagin@k-open.com])
 AC_PREREQ([2.59])
 AC_CONFIG_AUX_DIR(conftools)
 AC_CANONICAL_HOST
