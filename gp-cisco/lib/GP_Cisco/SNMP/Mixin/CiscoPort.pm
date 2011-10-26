@@ -153,6 +153,23 @@ sub get_port_info
             }
         }
     }
+    
+    {
+        # IF-MIB::ifAlias
+        my $base = '1.3.6.1.2.1.31.1.1.1.18';
+        my $prefixLen = length( $base ) + 1;
+        my $table = $session->get_table( -baseoid => $base );
+        
+        if( defined( $table ) )
+        {
+            while( my( $oid, $val ) = each %{$table} )
+            {
+                my $ifIndex = substr( $oid, $prefixLen );
+                my $name = $index2name{$ifIndex};
+                $result->{'ports'}{$name}{'comment'} = $val;
+            }
+        }
+    }
 
     {
         # IF-MIB::ifAdminStatus
@@ -204,6 +221,7 @@ sub get_port_info
                 my $ifIndex = substr( $oid, $prefixLen );
                 my $name = $index2name{$ifIndex};
                 $result->{'ports'}{$name}{'cdp-enabled'} = $truthVal{$val};
+                $result->{'ports'}{$name}{'cdp-neighbors'} = 0;
             }
         }
     }
@@ -332,6 +350,8 @@ sub get_port_info
 
             next unless defined($neighName);
 
+            $result->{'ports'}{$portName}{'cdp-neighbors'}++;
+            
             foreach my $prop ('address', 'port', 'platform')
             {
                 $result->{'cdp-neighbors'}{
