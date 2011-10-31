@@ -413,7 +413,7 @@ sub get_port_info
                     $result->{'ports'}{$name}{'udld-shutdown'} =
                         ($val == 1 ? 1:0);
                 }
-            }
+            }            
         }
         
         {
@@ -465,6 +465,13 @@ sub get_port_info
             delete $result->{'ports'}{$name};
         }
     }
+
+    # Do not keep the oper. status in the property history
+    $result->{'ports'}{'.nohistory'}{'oper-status'} = 1;
+    $result->{'ports'}{'.nohistory'}{'oper-up'} = 1;
+    $result->{'ports'}{'.nohistory'}{'udld-oper-status'} = 1;
+    $result->{'ports'}{'.nohistory'}{'udld-shutdown'} = 1;
+    $result->{'ports'}{'.nohistory'}{'cdp-neighbors'} = 1;
     
     my $json = new JSON;
     $json->pretty(1);
