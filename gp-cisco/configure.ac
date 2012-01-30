@@ -46,7 +46,7 @@ if test "$enable_pkgonly" != yes; then
      AC_MSG_ERROR([plugconfdir variable must be defined])
    fi
 
-   for module in 'Net::Telnet'
+   for module in 'JSON'
    do
      AC_MSG_CHECKING([presence of $module])
      if ${PERL} ${PERLOPTS} -e 'use '$module 2>/dev/null; then
